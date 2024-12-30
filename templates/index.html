@@ -1,52 +1,294 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sentiment Analysis</title>
-    <script src="https://cdn.tailwindcss.com"></script> <!-- Tailwind CSS CDN -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Two-Class Sentiment Analysis</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f9f9f9;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    /* Dark mode styling */
+    .dark-mode {
+      background-color: #1a1a2e;
+      color: #eaeaea;
+    }
+
+    /* Example custom scrollbar (optional) */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #cbd5e0;
+      border-radius: 10px;
+    }
+    .dark-mode::-webkit-scrollbar-thumb {
+      background-color: #4a4a6a;
+    }
+
+    /* Hover scale effect for buttons/images */
+    .btn:hover {
+      transform: scale(1.05);
+      transition: transform 0.2s ease-in-out;
+    }
+
+    /* Smooth transitions for theme toggle */
+    .transition-all {
+      transition: all 0.3s ease-in-out;
+    }
+
+    /* Fade-in-up keyframes */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translate3d(0, 20px, 0);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    /* Utility class to trigger fadeInUp animation */
+    .fade-in-up {
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+  </style>
 </head>
-<body class="bg-gray-100 p-5">
+<body class="min-h-screen flex flex-col transition-all">
 
-    <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
-        <h1 class="text-3xl font-semibold text-center text-gray-700">Sentiment Analysis</h1>
+  <!-- Navbar -->
+  <header class="sticky top-0 z-50 bg-white dark-mode:bg-gray-900 shadow-md py-4 transition-all">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+      <!-- Logo / Brand -->
+      <a href="#" class="text-2xl font-bold text-blue-600 dark-mode:text-blue-400">
+        <span class="mr-2 text-3xl">💬</span> Two-Class Sentiment
+      </a>
 
-        <form action="/predict" method="POST" class="mt-6 space-y-4">
-            <div>
-                <label for="text" class="block text-lg font-medium text-gray-600">Enter Text:</label>
-                <textarea name="text" id="text" rows="4" class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-            </div>
-            <button type="submit" class="w-full sm:w-auto bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600">Analyze</button>
-        </form>
+      <!-- Navigation & Theme Toggle -->
+      <nav class="flex items-center space-x-6">
+        <a href="#" class="text-gray-700 dark-mode:text-gray-300 hover:text-blue-600 dark-mode:hover:text-blue-400 transition">Features</a>
+        <a href="#" class="text-gray-700 dark-mode:text-gray-300 hover:text-blue-600 dark-mode:hover:text-blue-400 transition">Pricing</a>
+        <a href="#" class="text-gray-700 dark-mode:text-gray-300 hover:text-blue-600 dark-mode:hover:text-blue-400 transition">Docs</a>
 
-        {% if prediction %}
-        <div class="mt-6">
-            <h2 class="text-2xl font-semibold text-gray-800">Result:</h2>
-            <p class="text-lg mt-2"><strong>Text:</strong> {{ text }}</p>
-            <p class="text-lg mt-2"><strong>Sentiment:</strong> <span class="font-bold text-blue-500">{{ prediction }}</span></p>
-        </div>
-        {% endif %}
-
-        {% if trending_topics %}
-        <div class="mt-6">
-            <h2 class="text-2xl font-semibold text-gray-800">Trending Topics:</h2>
-            <ul class="list-disc pl-5">
-                {% for word, count in trending_topics %}
-                <li class="text-lg text-gray-600"><strong>{{ word }}</strong>: {{ count }} times</li>
-                {% endfor %}
-            </ul>
-        </div>
-        {% endif %}
-
-        {% if sentiment_graph %}
-        <div class="mt-6">
-            <h2 class="text-2xl font-semibold text-gray-800">Sentiment Distribution:</h2>
-            <!-- Display the generated graph -->
-            <img src="data:image/png;base64,{{ sentiment_graph }}" alt="Sentiment Distribution" class="w-full mt-4" />
-        </div>
-        {% endif %}
+        <!-- Theme Toggle Button -->
+        <button
+          id="themeToggle"
+          class="bg-gray-200 dark-mode:bg-gray-700 hover:bg-gray-300 dark-mode:hover:bg-gray-600 text-gray-800 dark-mode:text-gray-100 font-semibold py-2 px-4 rounded-md transition"
+        >
+          Toggle Dark Mode
+        </button>
+      </nav>
     </div>
+  </header>
 
+  <!-- Hero Section -->
+  <section class="w-full bg-blue-50 dark-mode:bg-gray-800 py-16 transition-all">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0">
+      <div class="md:w-1/2">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark-mode:text-gray-100 leading-tight mb-4">
+          Analyze Positive or Negative Sentiment Instantly
+        </h1>
+        <p class="text-lg text-gray-700 dark-mode:text-gray-300 mb-8">
+          Understand customer feedback at scale with a straightforward two-class approach: Positive or Negative.
+        </p>
+        <a
+          href="#analysis-section"
+          class="btn inline-block bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition-all"
+        >
+          Get Started
+        </a>
+      </div>
+
+      <!-- Chart with fade-in and hover scale effect -->
+      <div class="md:w-1/2 fade-in-up">
+        <img
+        src="{{ url_for('static', filename='images/chart.jpg') }}"
+        alt="Sentiment Trends Over Time"
+        class="rounded-lg shadow-lg transform transition hover:scale-105"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main id="analysis-section" class="max-w-7xl mx-auto w-full px-6 py-12 flex-1 transition-all">
+
+    <!-- Analysis Section -->
+    <section
+      class="bg-white dark-mode:bg-gray-800 dark-mode:text-gray-200
+             p-8 rounded-lg shadow-lg transition-all"
+    >
+      <h2 class="text-2xl font-bold text-gray-700 dark-mode:text-gray-300 mb-6">
+        Analyze Text
+      </h2>
+
+      <!-- Form -->
+      <form action="/predict" method="POST" class="space-y-6">
+        <div class="relative">
+          <label for="text" class="block mb-2 font-semibold">Enter text to analyze:</label>
+          <textarea
+            name="text"
+            id="text"
+            rows="4"
+            maxlength="500"
+            placeholder="Type your text here..."
+            class="w-full p-4 border border-gray-300 dark-mode:border-gray-600 rounded-lg
+                   focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            oninput="updateCount(this)"
+          ></textarea>
+          <small
+            class="text-gray-500 dark-mode:text-gray-400 absolute bottom-2 right-4"
+          >
+            <span id="charCount">0</span>/500
+          </small>
+        </div>
+
+        <!-- Submit / Analyze Button -->
+        <button
+          type="submit"
+          class="btn w-full sm:w-auto bg-blue-500 text-white font-semibold py-3 px-8 rounded-lg shadow-md hover:bg-blue-600"
+          onclick="showLoading()"
+        >
+          Analyze
+        </button>
+      </form>
+
+      <!-- Loading Spinner (hidden by default; shown on form submit) -->
+      <div id="loadingSpinner" class="hidden mt-4 flex items-center space-x-2">
+        <svg
+          class="animate-spin h-6 w-6 text-blue-600"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8v8H4z"
+          ></path>
+        </svg>
+        <p class="text-blue-600">Analyzing...</p>
+      </div>
+    </section>
+
+    <!-- Result Section (Displayed Conditionally) -->
+    {% if prediction %}
+    <section
+      class="mt-10 p-6 bg-gray-50 dark-mode:bg-gray-700
+             rounded-lg shadow-lg transition-all"
+    >
+      <h3 class="text-xl font-bold text-gray-800 dark-mode:text-gray-100 mb-4">
+        Analysis Result
+      </h3>
+
+      <!-- Card for the result -->
+      <div
+        class="bg-white dark-mode:bg-gray-800 p-4 rounded-lg shadow space-y-3
+               text-gray-700 dark-mode:text-gray-300"
+      >
+        <p>
+          <strong>Input Text:</strong> {{ text }}
+        </p>
+
+        <!-- Color-coded sentiment text -->
+        <p>
+          <strong>Predicted Sentiment:</strong>
+          {% if prediction == 'NEGATIVE' %}
+            <span class="font-bold text-red-600 dark-mode:text-red-400 ml-2">
+              {{ prediction }}
+            </span>
+          {% else %}
+            <span class="font-bold text-green-600 dark-mode:text-green-400 ml-2">
+              {{ prediction }}
+            </span>
+          {% endif %}
+        </p>
+      </div>
+    </section>
+    {% endif %}
+
+    <!-- Trending Topics (Displayed Conditionally) -->
+    {% if trending_topics %}
+    <section
+      class="mt-10 p-6 bg-gray-50 dark-mode:bg-gray-700
+             rounded-lg shadow-lg transition-all
+             text-gray-700 dark-mode:text-gray-200"
+    >
+      <h3 class="text-xl font-bold text-gray-800 dark-mode:text-gray-100 mb-4">
+        Trending Topics
+      </h3>
+      <ul class="list-disc pl-6 space-y-2">
+        {% for word, count in trending_topics %}
+        <li>
+          <strong class="text-blue-500 dark-mode:text-blue-400">
+            {{ word }}
+          </strong> : {{ count }} times
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+    {% endif %}
+
+    <!-- Sentiment Graph (Base64 image from Flask) -->
+    {% if sentiment_graph %}
+    <section
+      class="mt-10 p-6 bg-gray-50 dark-mode:bg-gray-700
+             rounded-lg shadow-lg transition-all"
+    >
+      <h3 class="text-xl font-bold text-gray-800 dark-mode:text-gray-100 mb-4">
+        Sentiment Distribution
+      </h3>
+      <div class="flex justify-center">
+        <img
+          src="data:image/png;base64,{{ sentiment_graph }}"
+          alt="Sentiment Graph"
+          class="rounded shadow-md"
+        />
+      </div>
+    </section>
+    {% endif %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-6 text-center bg-gray-100 dark-mode:bg-gray-900 transition-all">
+    <p class="text-sm text-gray-500 dark-mode:text-gray-400">
+      &copy; 2025 Two-Class Sentiment Analysis | Designed with care
+    </p>
+  </footer>
+
+  <!-- Script: Dark Mode Toggle -->
+  <script>
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
+
+    themeToggle.addEventListener('click', () => {
+      body.classList.toggle('dark-mode');
+    });
+
+    // Show loading spinner on form submission
+    function showLoading() {
+      document.getElementById('loadingSpinner').classList.remove('hidden');
+    }
+
+    // Character count in the textarea
+    function updateCount(textArea) {
+      const count = textArea.value.length;
+      document.getElementById('charCount').innerText = count;
+    }
+  </script>
 </body>
 </html>
-
