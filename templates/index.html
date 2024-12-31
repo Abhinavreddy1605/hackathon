@@ -73,15 +73,14 @@
   <header class="sticky top-0 z-50 bg-white dark-mode:bg-gray-900 shadow-md py-4 transition-all">
     <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
       <!-- Logo / Brand -->
-      <a href="#" class="text-2xl font-bold text-blue-600 dark-mode:text-blue-400">
-        <span class="mr-2 text-3xl">💬</span> Two-Class Sentiment
+      <a href="/" class="text-2xl font-bold text-blue-600 dark-mode:text-blue-400">
+        <span class="mr-2 text-3xl">💬</span> Two-Class Sentiment - Team TrioSolvers
       </a>
 
       <!-- Navigation & Theme Toggle -->
       <nav class="flex items-center space-x-6">
-        <a href="#" class="text-gray-700 dark-mode:text-gray-300 hover:text-blue-600 dark-mode:hover:text-blue-400 transition">Features</a>
-        <a href="#" class="text-gray-700 dark-mode:text-gray-300 hover:text-blue-600 dark-mode:hover:text-blue-400 transition">Pricing</a>
-        <a href="#" class="text-gray-700 dark-mode:text-gray-300 hover:text-blue-600 dark-mode:hover:text-blue-400 transition">Docs</a>
+        <a href="/about" class="text-gray-700 dark-mode:text-gray-300 hover:text-blue-600 dark-mode:hover:text-blue-400 transition">About Us</a>
+        <a href="/contact" class="text-gray-700 dark-mode:text-gray-300 hover:text-blue-600 dark-mode:hover:text-blue-400 transition">Contact</a>
 
         <!-- Theme Toggle Button -->
         <button
@@ -115,9 +114,9 @@
       <!-- Chart with fade-in and hover scale effect -->
       <div class="md:w-1/2 fade-in-up">
         <img
-        src="{{ url_for('static', filename='images/chart.jpg') }}"
-        alt="Sentiment Trends Over Time"
-        class="rounded-lg shadow-lg transform transition hover:scale-105"
+          src="{{ url_for('static', filename='images/chart.jpg') }}"
+          alt="Sentiment Trends Over Time"
+          class="rounded-lg shadow-lg transform transition hover:scale-105"
         />
       </div>
     </div>
@@ -185,7 +184,7 @@
       </div>
     </section>
 
-    <!-- Result Section (Displayed Conditionally) -->
+    <!-- Analysis Result Section (Displayed if "prediction" is passed) -->
     {% if prediction %}
     <section
       class="mt-10 p-6 bg-gray-50 dark-mode:bg-gray-700
@@ -221,7 +220,7 @@
     </section>
     {% endif %}
 
-    <!-- Trending Topics (Displayed Conditionally) -->
+    <!-- Trending Topics (Displayed if "trending_topics" is passed) -->
     {% if trending_topics %}
     <section
       class="mt-10 p-6 bg-gray-50 dark-mode:bg-gray-700
@@ -243,7 +242,7 @@
     </section>
     {% endif %}
 
-    <!-- Sentiment Graph (Base64 image from Flask) -->
+    <!-- Sentiment Distribution Graph (Displayed if "sentiment_graph" is passed) -->
     {% if sentiment_graph %}
     <section
       class="mt-10 p-6 bg-gray-50 dark-mode:bg-gray-700
@@ -261,12 +260,69 @@
       </div>
     </section>
     {% endif %}
+
+    <!-- Sentiment Trend Graph (Displayed if "sentiment_trend_graph" is passed) -->
+    {% if sentiment_trend_graph %}
+    <section
+      class="mt-10 p-6 bg-gray-50 dark-mode:bg-gray-700
+             rounded-lg shadow-lg transition-all"
+    >
+      <h3 class="text-xl font-bold text-gray-800 dark-mode:text-gray-100 mb-4">
+        Sentiment Trend Over Time
+      </h3>
+      <div class="flex justify-center">
+        <img
+          src="data:image/png;base64,{{ sentiment_trend_graph }}"
+          alt="Sentiment Trend Graph"
+          class="rounded shadow-md"
+        />
+      </div>
+    </section>
+    {% endif %}
+
+    <!-- Actionable Insights (Displayed if "actionable_insights" is passed) -->
+    {% if actionable_insights %}
+    <section
+      class="mt-10 p-6 bg-gray-50 dark-mode:bg-gray-700
+             rounded-lg shadow-lg transition-all
+             text-gray-700 dark-mode:text-gray-200"
+    >
+      <h3 class="text-xl font-bold text-gray-800 dark-mode:text-gray-100 mb-4">
+        Actionable Insights
+      </h3>
+      <ul class="list-disc pl-6 space-y-2">
+        {% for insight in actionable_insights %}
+        <li>{{ insight }}</li>
+        {% endfor %}
+      </ul>
+    </section>
+    {% endif %}
+
+    <!-- Word Cloud Section (Displayed if "word_cloud_image" is passed) -->
+    {% if word_cloud_image %}
+    <section
+      class="mt-10 p-6 bg-gray-50 dark-mode:bg-gray-700
+             rounded-lg shadow-lg transition-all"
+    >
+      <h3 class="text-xl font-bold text-gray-800 dark-mode:text-gray-100 mb-4">
+        Trending Topics Word Cloud
+      </h3>
+      <div class="flex justify-center">
+        <img
+          src="data:image/png;base64,{{ word_cloud_image }}"
+          alt="Word Cloud"
+          class="rounded shadow-md"
+        />
+      </div>
+    </section>
+    {% endif %}
+
   </main>
 
   <!-- Footer -->
   <footer class="py-6 text-center bg-gray-100 dark-mode:bg-gray-900 transition-all">
     <p class="text-sm text-gray-500 dark-mode:text-gray-400">
-      &copy; 2025 Two-Class Sentiment Analysis | Designed with care
+      &copy; 2025 Two-Class Sentiment Analysis | Designed with Love 💖 and Passion
     </p>
   </footer>
 
