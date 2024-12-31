@@ -4,7 +4,16 @@
 *Home Page of the Sentiment Analysis Application*
 
 ![Prediction Page](images/predict.png)
-*Prediction Results and Insights Page*
+*Prediction Results*
+
+![Prediction Page](images/predict1.png)
+*Trending Topics and  sentiment Distribution*
+
+![Prediction Page](images/predict3.png)
+*Sentiment Trend Over Time*
+
+![Prediction Page](images/predict2.png)
+*Trending Topics Word Cloud*
 
 ![About Us Page](images/about.png)
 *About Us*
